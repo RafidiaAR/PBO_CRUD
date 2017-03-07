@@ -26,12 +26,22 @@ import javax.swing.table.DefaultTableModel;
  */
 
 public class frmMain extends javax.swing.JFrame {
-    String nol_jam,nol_menit,nol_detik;
+    String nis;
+        String nama;
+        String tempat;
+        String tanggal;
+        String kelas;
+        String email;
+        String alamat;
+        String JK="";
+        String nol_jam="",nol_menit="",nol_detik="";
     /**
      * Creates new form frmMain
      */
     public frmMain() {
         initComponents();
+        setTanggal();
+        setJam();
     }
 
     /**
@@ -111,13 +121,13 @@ public class frmMain extends javax.swing.JFrame {
         LabelJam.setForeground(new java.awt.Color(255, 255, 255));
         LabelJam.setText("Jam");
         jPanel1.add(LabelJam);
-        LabelJam.setBounds(770, 60, 60, 17);
+        LabelJam.setBounds(680, 60, 150, 17);
 
         LabelTanggal.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         LabelTanggal.setForeground(new java.awt.Color(255, 255, 255));
         LabelTanggal.setText("Tanggal");
         jPanel1.add(LabelTanggal);
-        LabelTanggal.setBounds(770, 20, 60, 17);
+        LabelTanggal.setBounds(680, 20, 150, 17);
 
         getContentPane().add(jPanel1);
         jPanel1.setBounds(0, 0, 910, 100);
@@ -194,7 +204,7 @@ public class frmMain extends javax.swing.JFrame {
         jScrollPane1.setViewportView(txtAlamat);
 
         jPanel2.add(jScrollPane1);
-        jScrollPane1.setBounds(10, 480, 240, 96);
+        jScrollPane1.setBounds(10, 480, 240, 76);
 
         jLabel12.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel12.setText("Jenis Kelamin");
@@ -333,18 +343,21 @@ public class frmMain extends javax.swing.JFrame {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String tanggal = dateFormat.format(Tanggalan.getDate());
         String JK = "";
-        if("".equals(txtNIS.getText()) || "".equals(txtAlamat.getText()) || "".equals(txtKelas.getText()) || "".equals(txtNama.getText()) || Tanggalan.equals("") || txtTempatLahir.getText().equals("") || JK.equals("") ||"".equals(txtEmail.getText())){
+        if(rdLaki.isSelected()){
+                    JK = "L";
+        }
+        if (rdPerempuan.isSelected()) {
+            JK = "P";
+        }
+
+        if("".equals(txtNIS.getText())||"".equals(txtNama.getText())||"".equals(txtKelas.getText())||"".equals(txtEmail.getText())||"".equals(txtAlamat.getText())||JK.equals("")||"".equals(txtTempatLahir.getText())||tanggal.equals("")) {
             JOptionPane.showMessageDialog(this, "Harap Lengkapi Data","Error", 
             JOptionPane.WARNING_MESSAGE);
         }else{
             
-                if(rdLaki.isSelected()){
-                    JK = "L";
-                }else{
-                    JK = "P";
-                }
+                
         
-        String SQL = "insert into  t_siswa (NIS,NamaSiswa,Tempat,Tanggal,JenisKelamin,Kelas,Email,Alamat) "
+        String SQL = "insert into  t_siswa (NIS,NamaSiswa,TempatLahir,TanggalLahir,JenisKelamin,Kelas,Email,Alamat) "
                 + "VALUES('"+txtNIS.getText()+"', '"+txtNama.getText()+"', '"+txtTempatLahir.getText()+"', '"+tanggal+"', '"+JK+"',"
                 + "'"+txtKelas.getText()+"','"+txtEmail.getText()+"','"+txtAlamat.getText()+"')";
         int status = KoneksiDB.execute(SQL);
@@ -382,6 +395,9 @@ public class frmMain extends javax.swing.JFrame {
         buttonGroup1.clearSelection();
         txtEmail.setText("");
         txtAlamat.setText("");
+        txtTempatLahir.setText("");
+        Tanggalan.setDate(null);
+        
     }//GEN-LAST:event_ClearActionPerformed
 
     private void RefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshActionPerformed
@@ -391,33 +407,40 @@ public class frmMain extends javax.swing.JFrame {
 
     private void EditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditActionPerformed
         // TODO add your handling code here:
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String tanggal = dateFormat.format(Tanggalan.getDate());
-        if ("".equals(txtNIS.getText())||"".equals(txtNama.getText())|| "".equals(txtTempatLahir.getText())|| "".equals(tanggal)||
-                "".equals(txtKelas.getText())||"".equals(txtEmail.getText())||
-                "".equals(txtAlamat.getText())) {
-            JOptionPane.showMessageDialog(this, "Harap Lengkapi Data", "Error", JOptionPane.WARNING_MESSAGE);    
+        alamat = txtAlamat.getText();
+        email = txtEmail.getText();
+        nis = txtNIS.getText();
+        nama = txtNama.getText();
+        kelas = txtKelas.getText();
+        tempat = txtTempatLahir.getText();
+        String JK = "";
+        //Attur Tanggal
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        tanggal = df.format(Tanggalan.getDate());
+        //Atur Jenis Kelamin
+        if (rdLaki.isSelected()) {
+            JK = "L";
+        }
+        if ((rdPerempuan.isSelected())) {
+            JK = "P";
+        }
+// TODO add your handling code here:
+        if ("".equals(nis)||"".equals(nama)||"".equals(kelas)||"".equals(alamat)||"".equals(email)||JK.equals("")||tempat.equals("")||tanggal.equals("")) {
+            JOptionPane.showMessageDialog(this, "Harap Lengkapidata", "Error", JOptionPane.WARNING_MESSAGE);
         }else{
-            int baris = tblData.getSelectedRow();
-            String nis = tblData.getValueAt(baris, 0).toString();
-            String JK = "";
-            if (rdLaki.isSelected()) {
-                JK = "L";
-            }else{
-                JK = "P";
-            }
-            String SQL = "UPDATE t_siswa SET" 
-                    +" NIS='"+txtNIS.getText()+"',"
-                    +" TempatLahir='"+txtTempatLahir.getText()+"',"
-                    +" TanggalLahir='"+tanggal+"',"
-                    +" NamaSiswa='"+txtNama.getText()+"',"
-                    +" JenisKelamin='"+JK+"',"
-                    +" Kelas='"+txtKelas.getText()+"',"
-                    +" Email='"+txtEmail.getText()+"',"
-                    +" Alamat='"+txtAlamat.getText()+"' WHERE NIS="+nis;
+            String SQL = "UPDATE t_siswa SET NIS='"+nis+"',"
+                    + "NamaSiswa='"+nama+"',"
+                    + "JenisKelamin='"+JK+"',"
+                    + "Kelas='"+kelas+"',"
+                    + "TempatLahir='"+tempat+"',"
+                    + "TanggalLahir='"+tanggal+"',"
+                    + "Email='"+email+"',"
+                    + "Alamat='"+alamat+"'"
+                    + "WHERE NIS='"+nis+"'";
             int status = KoneksiDB.execute(SQL);
-            if (status == 1) {
-                 JOptionPane.showMessageDialog(this, "Data berhasil diupdate","Sukses", JOptionPane.INFORMATION_MESSAGE);
+            if (status==1) {
+                JOptionPane.showMessageDialog(this, "Data berhasil diupdate", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                selectData();
             }else{
                 JOptionPane.showMessageDialog(this, "Data gagal diupdate", "Gagal", JOptionPane.WARNING_MESSAGE);
             }
